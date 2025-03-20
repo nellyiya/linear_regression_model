@@ -1,81 +1,144 @@
 
 ---
 
-# **Heart Attack Risk Prediction**
+# **🩺 Heart Attack Risk Prediction API**
 
-## **Project Overview**
+## **🏥 Project Overview**
 
-This project aims to predict the likelihood of a heart attack using a variety of health and lifestyle features. We use machine learning models, including Linear Regression, Decision Trees, and Random Forest, to predict the risk of a heart attack based on various factors such as cholesterol, heart rate, family history, smoking habits, and more.
+Heart disease remains one of the leading causes of death worldwide. This project leverages **machine learning** to predict the likelihood of a heart attack based on various health and lifestyle factors.  
 
-The objective is to develop a model that can accurately predict heart attack risk, which can be used to assist healthcare professionals in identifying individuals at high risk and enabling preventive measures.
+Using models like **Linear Regression, Decision Trees, and Random Forest**, this tool helps **identify high-risk individuals**—enabling **early intervention and prevention**.  
 
-## **Dataset Description**
+✅ **What this API does:**  
+- Analyzes **cholesterol, heart rate, diabetes history, smoking habits, stress levels**, and more.  
+- Predicts the **risk of a heart attack** based on real-world medical data.  
+- Assists **health professionals & individuals** in making informed decisions.  
 
-The dataset used for this project contains various health-related features that can influence the likelihood of a heart attack. The features include:
-
-- **Age**: Age of the individual.
-- **Cholesterol**: Cholesterol levels in the blood.
-- **Heart rate**: The individual's resting heart rate.
-- **Diabetes**: Whether the individual has diabetes.
-- **Family History**: A history of heart disease in the family.
-- **Smoking**: Whether the individual is a smoker.
-- **Obesity**: Body Mass Index (BMI) indicating obesity.
-- **Alcohol Consumption**: The individual's alcohol consumption habits.
-- **Exercise Hours Per Week**: Amount of physical activity the individual engages in weekly.
-- **Diet**: The individual's eating habits.
-- **Previous Heart Problems**: Whether the individual has had prior heart-related issues.
-- **Medication Use**: Whether the individual is taking heart-related medications.
-- **Stress Level**: The individual's stress levels.
-- **Sedentary Hours Per Day**: The number of hours spent being sedentary per day.
-- **Income**: The individual's income level.
-- **BMI**: Body Mass Index of the individual.
-- **Triglycerides**: Levels of triglycerides in the blood.
-- **Physical Activity Days Per Week**: Number of days the individual engages in physical activity weekly.
-- **Sleep Hours Per Day**: The individual's average sleep hours per day.
-- **Heart Attack Risk (Binary)**: The target variable (1 = heart attack risk, 0 = no risk).
-- **Blood Sugar**: The individual's blood sugar level.
-- **CK-MB**: An enzyme marker for heart damage.
-- **Troponin**: A protein involved in heart muscle contraction.
-- **Heart Attack Risk (Text)**: A textual description of the individual's risk.
-- **Gender**: The individual's gender.
-- **Systolic Blood Pressure**: The top number in blood pressure readings.
-- **Diastolic Blood Pressure**: The bottom number in blood pressure readings.
-
-## **Data Source**
-
-The dataset used for this project is sourced from the **UCI Machine Learning Repository**. It contains data collected from various medical records and health surveys, making it a rich source for training predictive models. 
-
-Link to dataset: [Kaggle Data Set](https://www.kaggle.com/datasets/alikalwar/heart-attack-risk-prediction-cleaned-dataset)
-
-## **Project Files**
-
-- **heart-attack-risk.ipynb**: Jupyter notebook containing data preprocessing, model training, and evaluation.
-- **best_model.pkl**: The saved model with the lowest loss (based on MSE).
-- **visualizations.py**: Python file containing code for generating visualizations (e.g., correlation heatmap, feature distributions).
-- **requirements.txt**: The Python dependencies needed to run the project.
-
-## **Setup Instructions**
-
-To run the project, follow these steps:
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/heart-attack-risk-prediction.git
-   ```
-
-2. Install the necessary dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Open the **heart-attack-risk.ipynb** file in Jupyter Notebook or JupyterLab.
-
-4. Run the notebook to start the analysis and model training.
-
-## **License**
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+🔗 **Try the API:** [`http://127.0.0.1:8000/docs`](http://127.0.0.1:8000/docs) _(Swagger UI)_  
 
 ---
 
-This README includes a **brief description of the dataset** and its **source**, along with instructions for **setting up** and **using** the project. It’s well-suited for providing context and getting others up and running with your code.
+## **📊 Dataset Description**  
+
+The dataset contains key **health indicators** that influence the risk of a heart attack:  
+
+| **Feature**               | **Description** |
+|---------------------------|---------------|
+| **Age**                   | Age of the individual. |
+| **Cholesterol**           | Cholesterol levels in the blood. |
+| **Heart rate**            | Resting heart rate. |
+| **Diabetes**              | Presence of diabetes (Yes/No). |
+| **Family History**        | History of heart disease in the family. |
+| **Smoking**               | Whether the individual is a smoker. |
+| **Obesity (BMI)**         | Body Mass Index (BMI) indicator. |
+| **Alcohol Consumption**   | Individual’s alcohol intake. |
+| **Exercise Hours/Week**   | Weekly physical activity. |
+| **Diet**                  | Eating habits. |
+| **Previous Heart Issues** | Past heart-related problems. |
+| **Medication Use**        | Whether taking heart-related medications. |
+| **Stress Level**          | High/Moderate/Low stress. |
+| **Sedentary Hours/Day**   | Time spent inactive. |
+| **Income Level**          | Financial background. |
+| **Triglycerides**         | Blood fat levels. |
+| **Physical Activity Days**| Number of active days per week. |
+| **Sleep Hours/Day**       | Average sleep per night. |
+| **Systolic Blood Pressure** | Top number in BP readings. |
+| **Diastolic Blood Pressure** | Bottom number in BP readings. |
+| **Heart Attack Risk (Binary)** | Target variable: 1 = High risk, 0 = Low risk. |
+
+📌 **Data Source:**  
+This dataset is sourced from the **UCI Machine Learning Repository** and compiled from medical records and health surveys.  
+
+🔗 **Dataset Link:** [Kaggle Heart Attack Risk prediction Dataset](https://www.kaggle.com/datasets/iamsouravbanerjee/heart-attack-prediction-dataset)  
+
+---
+
+## **📂 Project Files**  
+
+## 📂 Project Structure
+
+📂 linear_regression_model/
+│
+├── 📁 summative/
+│   ├── 📁 linear_regression/
+│   │   ├── 📓 heart-attack-risk.ipynb
+        ├── 📑 heart_attack_prediction_dataset.csv
+
+│   ├── 📁 API/
+│   │   ├── 📝 prediction.py
+│   │   ├── 📄 requirements.txt
+│   ├── 📁 heart_attackapp/
+
+---
+
+## 🚀 Setup Instructions**  
+
+⚡ Run the project locally in just 3 steps!**  
+
+### 1️⃣ Clone the Repository  
+```bash
+git clone https://github.com/yourusername/heart-attack-risk-prediction.git
+cd heart-attack-risk-prediction
+```
+
+### 2️⃣ Install Dependencies  
+```bash
+pip install -r requirements.txt
+```
+
+### 3️⃣ Run Jupyter Notebook  
+```bash
+jupyter notebook
+```
+Now, open `heart-attack-risk.ipynb` and **execute the cells** to start training and predictions!  
+
+---
+
+## **🔧 How to Use the API**  
+
+You can test predictions via **Postman, cURL, or Python requests**.  
+
+🔹 **Endpoint:** `POST /predict`  
+🔹 **Request Format:**  
+```json
+{
+  "features": [65, 200, 75, 1, 1, 1, 30, 2, 4, 1, 1, 0, 3, 10, 50000, 25, 150, 3, 7, 1, 120, 10, 0, "Male", 140, 90]
+}
+```
+
+🔹 **Example Request (Python)**  
+```python
+import requests
+
+url = "http://127.0.0.1:8000/predict"
+data = {"features": [65, 200, 75, 1, 1, 1, 30, 2, 4, 1, 1, 0, 3, 10, 50000, 25, 150, 3, 7, 1, 120, 10, 0, "Male", 140, 90]}
+response = requests.post(url, json=data)
+
+print(response.json())  # {'prediction': [0.78]}
+```
+
+🔹 **Swagger UI Documentation**  
+Access the API documentation and test it live at: [`http://127.0.0.1:8000/docs`](http://127.0.0.1:8000/docs)  
+
+---
+
+
+## **📜 License**  
+
+This project is **open-source** under the **MIT License**. Feel free to use and modify it! Check out the [LICENSE](LICENSE) file for more details.  
+
+---
+
+### **🌟 Contributors & Feedback**  
+
+💡 **Want to contribute?** Fork this repository and submit a pull request!  
+📧 **Questions? Suggestions?** Reach out via GitHub Issues.  
+
+---
+
+### **🚀 Let’s Predict & Prevent!**  
+
+Take control of **heart health** with **AI-powered predictions**. Start using this model today! 🩺❤️  
+
+---
+
