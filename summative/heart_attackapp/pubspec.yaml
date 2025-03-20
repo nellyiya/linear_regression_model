@@ -1,0 +1,21 @@
+name: heart_attack_prediction
+description: A Flutter project to predict heart attack risk.
+publish_to: 'none' # Remove this line if you want to publish to pub.dev
+
+environment:
+  sdk: '^3.7.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # Add any other dependencies your app needs here
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/back.jpg
+    - assets/bt.jpg
