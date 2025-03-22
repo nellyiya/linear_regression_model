@@ -4,6 +4,7 @@
 # **🩺 Heart Attack Risk Prediction API**
 
 ## **🏥 Project Overview**
+Mission: Predict heart attack risk using a rich dataset with varied features.(Healthcare GCGOS)
 
 Heart disease remains one of the leading causes of death worldwide. This project leverages **machine learning** to predict the likelihood of a heart attack based on various health and lifestyle factors.  
 
