@@ -341,15 +341,18 @@ class _PredictionScreenState extends State<PredictionScreen> {
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide.none,
           ),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         ),
-        items: ['No', 'Yes']
-            .map((value) => DropdownMenuItem(
-                  value: value == 'Yes' ? '1' : '0', // Set 1 for Yes, 0 for No
-                  child: Text(value),
-                ))
-            .toList(),
+        items: [
+          DropdownMenuItem(
+            value: '0', // Representing 'No'
+            child: Text('0'),
+          ),
+          DropdownMenuItem(
+            value: '1', // Representing 'Yes'
+            child: Text('1'),
+          ),
+        ],
         onChanged: (newValue) {
           setState(() {
             _diabetesValue = newValue!;
@@ -371,12 +374,9 @@ class WaveClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     Path path = Path();
     path.lineTo(0, 0);
-    path.quadraticBezierTo(
-        size.width / 4, size.height / 4, size.width / 2, size.height / 4);
-    path.quadraticBezierTo(
-        size.width * 3 / 4, size.height / 4, size.width, 0);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
+    path.lineTo(0, size.height - 30);
+    path.quadraticBezierTo(size.width / 2, size.height, size.width, size.height - 30);
+    path.lineTo(size.width, 0);
     path.close();
     return path;
   }
