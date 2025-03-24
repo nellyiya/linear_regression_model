@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware  # Add this import
+from fastapi.middleware.cors import CORSMiddleware
 import joblib
 import numpy as np
 import pandas as pd
@@ -54,18 +54,25 @@ def predict(input: PredictionInput):
             'AGE', 'SYSTOLIC', 'DIASTOLIC', 'CHOLESTEROL', 'HEART_RATE', 'DIABETES'
         ]
         input_data = pd.DataFrame([input.dict()], columns=feature_names)
-        
+
         # Make prediction
         prediction = model.predict(input_data)
-        
+
+        # Print raw prediction for debugging purposes
+        print(f"Model raw prediction: {prediction}")  # For debugging
+
         # Round the prediction to 0 or 1 (binary classification)
         prediction = round(prediction[0])
-        
-        # Return the prediction
-        return {"prediction": prediction}
+
+        # Map prediction to "Low Risk" or "High Risk"
+        risk = "Low Risk" if prediction == 0 else "High Risk"
+
+        # Return the prediction as "Low Risk" or "High Risk"
+        return {"prediction": risk}
+
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 # Run the FastAPI app
-if __name__ == "__prediction__":  # Fixed condition here
+if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
