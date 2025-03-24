@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http; // Importing the HTTP package
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
@@ -135,7 +136,59 @@ class PredictionScreen extends StatefulWidget {
 }
 
 class _PredictionScreenState extends State<PredictionScreen> {
-  String _diabetesValue = 'No';
+  String _diabetesValue = '0'; // Default to '0' (No)
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController _ageController = TextEditingController();
+  TextEditingController _systolicController = TextEditingController();
+  TextEditingController _diastolicController = TextEditingController();
+  TextEditingController _cholesterolController = TextEditingController();
+  TextEditingController _heartRateController = TextEditingController();
+
+  bool _isLoading = false;
+  String? _predictionResult;
+
+  // Function to make the HTTP request to the backend
+  Future<void> _predictHeartRisk() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        // Collect the data from the form
+        var url = Uri.parse('https://linear-regression-model-summative-fkb9.onrender.com');
+        var response = await http.post(
+          url,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'age': _ageController.text,
+            'systolic': _systolicController.text,
+            'diastolic': _diastolicController.text,
+            'cholesterol': _cholesterolController.text,
+            'heart_rate': _heartRateController.text,
+            'diabetes': _diabetesValue,
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          // Parse the response
+          var data = json.decode(response.body);
+          setState(() {
+            _predictionResult = data['risk'];
+            _isLoading = false;
+          });
+        } else {
+          throw Exception('Failed to predict');
+        }
+      } catch (e) {
+        setState(() {
+          _isLoading = false;
+          _predictionResult = 'Error: Could not calculate risk';
+        });
+        print(e.toString());  // Debug: printing error to console
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -192,31 +245,47 @@ class _PredictionScreenState extends State<PredictionScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 30, vertical: 40),
-                      child: ListView(
-                        children: [
-                          _buildInputField("Age", "Years"),
-                          _buildInputField("Cholesterol", "mg/dL"),
-                          _buildInputField("Blood Pressure", "mmHg"),
-                          _buildInputField("Heart Rate", "bpm"),
-                          _buildDiabetesDropdown(),
-                          const SizedBox(height: 30),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.redAccent,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30)),
-                              padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: Form(
+                        key: _formKey,
+                        child: ListView(
+                          children: [
+                            _buildInputField("Age", "Years", _ageController),
+                            _buildInputField("Systolic BP", "mmHg", _systolicController),
+                            _buildInputField("Diastolic BP", "mmHg", _diastolicController),
+                            _buildInputField("Cholesterol", "mg/dL", _cholesterolController),
+                            _buildInputField("Heart Rate", "bpm", _heartRateController),
+                            _buildDiabetesDropdown(),
+                            const SizedBox(height: 30),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.redAccent,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30)),
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                              ),
+                              onPressed: _isLoading ? null : _predictHeartRisk,
+                              child: _isLoading
+                                  ? const CircularProgressIndicator(
+                                      color: Colors.white,
+                                    )
+                                  : const Text(
+                                      "Calculate Risk",
+                                      style: TextStyle(fontSize: 18, color: Colors.white),
+                                    ),
                             ),
-                            onPressed: () {
-                              // Add your risk calculation logic here
-                            },
-                            child: const Text(
-                              "Calculate Risk",
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.white),
-                            ),
-                          ),
-                        ],
+                            if (_predictionResult != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 20),
+                                child: Text(
+                                  'Prediction Result: $_predictionResult',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -229,10 +298,11 @@ class _PredictionScreenState extends State<PredictionScreen> {
     );
   }
 
-  Widget _buildInputField(String label, String hint) {
+  Widget _buildInputField(String label, String hint, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: TextFormField(
+        controller: controller,
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,
@@ -242,11 +312,16 @@ class _PredictionScreenState extends State<PredictionScreen> {
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide.none,
           ),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         ),
         keyboardType: TextInputType.number,
         style: const TextStyle(fontSize: 16),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return '$label is required';
+          }
+          return null;
+        },
       ),
     );
   }
@@ -269,7 +344,7 @@ class _PredictionScreenState extends State<PredictionScreen> {
         ),
         items: ['No', 'Yes']
             .map((value) => DropdownMenuItem(
-                  value: value,
+                  value: value == 'Yes' ? '1' : '0', // Set 1 for Yes, 0 for No
                   child: Text(value),
                 ))
             .toList(),
@@ -277,6 +352,12 @@ class _PredictionScreenState extends State<PredictionScreen> {
           setState(() {
             _diabetesValue = newValue!;
           });
+        },
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please select diabetes status';
+          }
+          return null;
         },
       ),
     );
@@ -307,5 +388,7 @@ class WaveClipper extends CustomClipper<Path> {
   }
 
   @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
+  }
 }
