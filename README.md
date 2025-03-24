@@ -123,6 +123,10 @@ Access the API documentation and test it live at: [`http://127.0.0.1:8000/docs`]
 
 ---
 
+![Home page](pictures/screenshots/home.png)
+![prediction page](pictures/screenshots/prediction.png)
+
+
 
 ## **📜 License**  
 
