@@ -156,17 +156,17 @@ class _PredictionScreenState extends State<PredictionScreen> {
 
       try {
         // Collect the data from the form
-        var url = Uri.parse('https://linear-regression-model-summative-fkb9.onrender.com');
+        var url = Uri.parse('https://linear-regression-model-summative-fkb9.onrender.com/predict');
         var response = await http.post(
           url,
           headers: {'Content-Type': 'application/json'},
           body: json.encode({
-            'age': _ageController.text,
-            'systolic': _systolicController.text,
-            'diastolic': _diastolicController.text,
-            'cholesterol': _cholesterolController.text,
-            'heart_rate': _heartRateController.text,
-            'diabetes': _diabetesValue,
+            'AGE': _ageController.text,
+            'SYSTOLIC': _systolicController.text,
+            'DIASTOLIC': _diastolicController.text,
+            'CHOLESTEROL': _cholesterolController.text,
+            'HEART_RATE': _heartRateController.text,
+            'DIABETES': _diabetesValue,
           }),
         );
 
@@ -174,7 +174,9 @@ class _PredictionScreenState extends State<PredictionScreen> {
           // Parse the response
           var data = json.decode(response.body);
           setState(() {
-            _predictionResult = data['risk'];
+            _predictionResult = data['prediction'] == '1'
+                ? 'High Risk'
+                : 'Low Risk';
             _isLoading = false;
           });
         } else {
@@ -367,20 +369,12 @@ class _PredictionScreenState extends State<PredictionScreen> {
 class WaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-    final path = Path();
-    path.lineTo(0, size.height * 0.10);
+    Path path = Path();
+    path.lineTo(0, 0);
     path.quadraticBezierTo(
-      size.width / 4,
-      size.height * 0.30,
-      size.width / 2,
-      size.height * 0.25,
-    );
+        size.width / 4, size.height / 4, size.width / 2, size.height / 4);
     path.quadraticBezierTo(
-      size.width * 0.75,
-      size.height * 0.20,
-      size.width,
-      size.height * 0.30,
-    );
+        size.width * 3 / 4, size.height / 4, size.width, 0);
     path.lineTo(size.width, size.height);
     path.lineTo(0, size.height);
     path.close();
