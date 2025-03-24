@@ -115,7 +115,7 @@ Response body
 
 🔹 **My video** 
 
-
+https://youtu.be/RHN8ncn4mwE
 
 print(response.json())  # {'prediction': [0.78]}
 ```
