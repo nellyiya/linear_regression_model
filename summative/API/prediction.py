@@ -1,78 +1,388 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
-import joblib
-import numpy as np
-import pandas as pd
-import uvicorn
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-# Initialize FastAPI app
-app = FastAPI()
+void main() {
+  runApp(const MyApp());
+}
 
-# Load the saved model
-def load_model(model_path='best_heart_attack_model.pkl'):
-    try:
-        model = joblib.load(model_path)
-        print("Model loaded successfully!")
-        return model
-    except Exception as e:
-        print(f"Error loading the model: {e}")
-        return None
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-# Load the model
-model = load_model()
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: const ConnectScreen(),
+    );
+  }
+}
 
-# Check if the model is loaded
-if model is None:
-    raise Exception("Model could not be loaded. Check the model file and dependencies.")
+class ConnectScreen extends StatelessWidget {
+  const ConnectScreen({super.key});
 
-# Define the input data schema using Pydantic
-class PredictionInput(BaseModel):
-    AGE: int
-    SYSTOLIC: int
-    DIASTOLIC: int
-    CHOLESTEROL: int
-    HEART_RATE: int
-    DIABETES: int
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              Expanded(
+                flex: 5,
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Image.asset(
+                      'assets/connect_image.png',
+                      height: 250,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const Icon(Icons.error_outline, size: 100),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 5,
+                child: Stack(
+                  children: [
+                    ClipPath(
+                      clipper: WaveClipper(),
+                      child: Container(
+                        color: const Color(0xFF1B1D3A),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 30,
+                        vertical: 10,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "🫀 Heart Attack Risk Prediction",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          const Text(
+                            "Assess your heart health instantly. Stay informed, stay healthy!",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.white70,
+                            ),
+                          ),
+                          const SizedBox(height: 25),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.redAccent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 30,
+                                vertical: 15,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const PredictionScreen()),
+                              );
+                            },
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "🔍 Check Your Risk Now",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                Icon(Icons.arrow_forward, color: Colors.white),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
 
-# Add CORS middleware
-origins = ["*"]  # Allows all origins (for development)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+class PredictionScreen extends StatefulWidget {
+  const PredictionScreen({super.key});
 
-# Define the prediction endpoint
-@app.post('/predict')
-def predict(input: PredictionInput):
-    try:
-        # Convert input data to a pandas DataFrame with feature names
-        feature_names = [
-            'AGE', 'SYSTOLIC', 'DIASTOLIC', 'CHOLESTEROL', 'HEART_RATE', 'DIABETES'
-        ]
-        input_data = pd.DataFrame([input.dict()], columns=feature_names)
+  @override
+  _PredictionScreenState createState() => _PredictionScreenState();
+}
 
-        # Make prediction
-        prediction = model.predict(input_data)
+class _PredictionScreenState extends State<PredictionScreen> {
+  String _diabetesValue = '0'; // Default to '0' (No)
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController _ageController = TextEditingController();
+  TextEditingController _systolicController = TextEditingController();
+  TextEditingController _diastolicController = TextEditingController();
+  TextEditingController _cholesterolController = TextEditingController();
+  TextEditingController _heartRateController = TextEditingController();
 
-        # Print raw prediction for debugging purposes
-        print(f"Model raw prediction: {prediction}")  # For debugging
+  bool _isLoading = false;
+  String? _predictionResult;
 
-        # Round the prediction to 0 or 1 (binary classification)
-        prediction = round(prediction[0])
+  // Function to make the HTTP request to the backend
+  Future<void> _predictHeartRisk() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      setState(() {
+        _isLoading = true;
+      });
 
-        # Map prediction to "Low Risk" or "High Risk"
-        risk = "Low Risk" if prediction == 0 else "High Risk"
+      try {
+        // Collect the data from the form
+        var url = Uri.parse('https://linear-regression-model-summative-fkb9.onrender.com/predict');
+        var response = await http.post(
+          url,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'AGE': _ageController.text,
+            'SYSTOLIC': _systolicController.text,
+            'DIASTOLIC': _diastolicController.text,
+            'CHOLESTEROL': _cholesterolController.text,
+            'HEART_RATE': _heartRateController.text,
+            'DIABETES': _diabetesValue,
+          }),
+        );
 
-        # Return the prediction as "Low Risk" or "High Risk"
-        return {"prediction": risk}
+        if (response.statusCode == 200) {
+          // Parse the response
+          var data = json.decode(response.body);
+          setState(() {
+            _predictionResult = data['prediction'] == '1'
+                ? 'High Risk'
+                : 'Low Risk';
+            _isLoading = false;
+          });
+        } else {
+          throw Exception('Failed to predict');
+        }
+      } catch (e) {
+        setState(() {
+          _isLoading = false;
+          _predictionResult = 'Error: Could not calculate risk';
+        });
+        print(e.toString());  // Debug: printing error to console
+      }
+    }
+  }
 
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Text(
+                        "Heart Health Assessment",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1B1D3A),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        "Please provide your health information",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 8,
+                child: Stack(
+                  children: [
+                    ClipPath(
+                      clipper: WaveClipper(),
+                      child: Container(
+                        color: const Color(0xFF1B1D3A),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 40),
+                      child: Form(
+                        key: _formKey,
+                        child: ListView(
+                          children: [
+                            _buildInputField("Age", "Years", _ageController),
+                            _buildInputField("Systolic BP", "mmHg", _systolicController),
+                            _buildInputField("Diastolic BP", "mmHg", _diastolicController),
+                            _buildInputField("Cholesterol", "mg/dL", _cholesterolController),
+                            _buildInputField("Heart Rate", "bpm", _heartRateController),
+                            _buildDiabetesDropdown(),
+                            const SizedBox(height: 30),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.redAccent,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30)),
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                              ),
+                              onPressed: _isLoading ? null : _predictHeartRisk,
+                              child: _isLoading
+                                  ? const CircularProgressIndicator(
+                                      color: Colors.white,
+                                    )
+                                  : const Text(
+                                      "Calculate Risk",
+                                      style: TextStyle(fontSize: 18, color: Colors.white),
+                                    ),
+                            ),
+                            if (_predictionResult != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 20),
+                                child: Text(
+                                  'Prediction Result: $_predictionResult',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
-# Run the FastAPI app
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+  Widget _buildInputField(String label, String hint, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hint,
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        ),
+        keyboardType: TextInputType.number,
+        style: const TextStyle(fontSize: 16),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return '$label is required';
+          }
+          return null;
+        },
+      ),
+    );
+  }
+
+  Widget _buildDiabetesDropdown() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: DropdownButtonFormField<String>(
+        value: _diabetesValue,
+        decoration: InputDecoration(
+          labelText: "Diabetes",
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        ),
+        items: [
+          DropdownMenuItem(
+            value: '0', // Representing 'No'
+            child: Text('0'),
+          ),
+          DropdownMenuItem(
+            value: '1', // Representing 'Yes'
+            child: Text('1'),
+          ),
+        ],
+        onChanged: (newValue) {
+          setState(() {
+            _diabetesValue = newValue!;
+          });
+        },
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please select diabetes status';
+          }
+          return null;
+        },
+      ),
+    );
+  }
+}
+
+class WaveClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.lineTo(0, 0);
+    path.lineTo(0, size.height - 30);
+    path.quadraticBezierTo(size.width / 2, size.height, size.width, size.height - 30);
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
+  }
+}
