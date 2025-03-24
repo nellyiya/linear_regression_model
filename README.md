@@ -122,10 +122,10 @@ print(response.json())  # {'prediction': [0.78]}
 Access the API documentation and test it live at: [`http://127.0.0.1:8000/docs`](http://127.0.0.1:8000/docs)  
 
 ---
+![home](https://github.com/user-attachments/assets/81549ecf-78bc-4721-b37b-f2b1dad3552b)
 
-![Home page](pictures/screenshots/home.png)
-![prediction page](pictures/screenshots/prediction.png)
 
+![prediction](https://github.com/user-attachments/assets/6fa53bfe-731f-48c4-989a-3440f70e86af)
 
 
 ## **📜 License**  
