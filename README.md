@@ -3,17 +3,12 @@
 
 # **🩺 Heart Attack Risk Prediction API**
 
-## **🏥 Project Overview**
-Mission: Predict heart attack risk using a rich dataset with varied features.(Healthcare GCGOS)
+## **🏥 Project Overview and Mission**
+Mission: Predict heart attack risk using a rich dataset with varied features Using FastAPI and a Flutter app.(Healthcare GCGOS)
 
 Heart disease remains one of the leading causes of death worldwide. This project leverages **machine learning** to predict the likelihood of a heart attack based on various health and lifestyle factors.  
 
 Using models like **Linear Regression, Decision Trees, and Random Forest**, this tool helps **identify high-risk individuals**—enabling **early intervention and prevention**.  
-
-✅ **What this API does:**  
-- Analyzes **cholesterol, heart rate, diabetes history, smoking habits, stress levels**, and more.  
-- Predicts the **risk of a heart attack** based on real-world medical data.  
-- Assists **health professionals & individuals** in making informed decisions.  
 
 🔗 **Try the API:** [`http://127.0.0.1:8000/docs`](http://127.0.0.1:8000/docs) _(Swagger UI)_  
 
@@ -48,8 +43,6 @@ The dataset contains key **health indicators** that influence the risk of a hear
 | **Heart Attack Risk (Binary)** | Target variable: 1 = High risk, 0 = Low risk. |
 
 📌 **Data Source:**  
-This dataset is sourced from the **UCI Machine Learning Repository** and compiled from medical records and health surveys.  
-
 🔗 **Dataset Link:** [Kaggle Heart Attack Risk prediction Dataset](https://www.kaggle.com/datasets/iamsouravbanerjee/heart-attack-prediction-dataset)  
 
 ---
@@ -78,8 +71,8 @@ This dataset is sourced from the **UCI Machine Learning Repository** and compile
 
 ### 1️⃣ Clone the Repository  
 ```bash
-git clone https://github.com/yourusername/heart-attack-risk-prediction.git
-cd heart-attack-risk-prediction
+git clone https://github.com/nellyiya/linear_regression_model.git
+cd heart-attack-risk.ipynb
 ```
 
 ### 2️⃣ Install Dependencies  
@@ -95,31 +88,39 @@ Now, open `heart-attack-risk.ipynb` and **execute the cells** to start training 
 
 ---
 
-## **🔧 How to Use the API**  
+## **Publicly  API Endpoint**  
 
 You can test predictions via **Postman, cURL, or Python requests**.  
-
-🔹 **Endpoint:** `POST /predict`  
+🔹 **
+🔹 **Url:** `https://linear-regression-model-summative-fkb9.onrender.com/predict`  
+ 🔹 **Swagger UI:**  https://linear-regression-model-summative-fkb9.onrender.com/docs
 🔹 **Request Format:**  
 ```json
 {
-  "features": [65, 200, 75, 1, 1, 1, 30, 2, 4, 1, 1, 0, 3, 10, 50000, 25, 150, 3, 7, 1, 120, 10, 0, "Male", 140, 90]
+  "AGE": 45,
+  "SYSTOLIC": 130,
+  "DIASTOLIC": 85,
+  "CHOLESTEROL": 220,
+  "HEART_RATE": 75,
+  "DIABETES": 0
 }
+ ```The prediction will be
+	
+Response body
+{
+  "prediction": "High Risk"
+}
+
 ```
 
-🔹 **Example Request (Python)**  
-```python
-import requests
+🔹 **My video** 
 
-url = "http://127.0.0.1:8000/predict"
-data = {"features": [65, 200, 75, 1, 1, 1, 30, 2, 4, 1, 1, 0, 3, 10, 50000, 25, 150, 3, 7, 1, 120, 10, 0, "Male", 140, 90]}
-response = requests.post(url, json=data)
+
 
 print(response.json())  # {'prediction': [0.78]}
 ```
 
-🔹 **Swagger UI Documentation**  
-Access the API documentation and test it live at: [`http://127.0.0.1:8000/docs`](http://127.0.0.1:8000/docs)  
+🔹 **Mobile App **  
 
 ---
 ![home](https://github.com/user-attachments/assets/81549ecf-78bc-4721-b37b-f2b1dad3552b)
@@ -127,17 +128,6 @@ Access the API documentation and test it live at: [`http://127.0.0.1:8000/docs`]
 
 ![prediction](https://github.com/user-attachments/assets/6fa53bfe-731f-48c4-989a-3440f70e86af)
 
-
-## **📜 License**  
-
-This project is **open-source** under the **MIT License**. Feel free to use and modify it! Check out the [LICENSE](LICENSE) file for more details.  
-
----
-
-### **🌟 Contributors & Feedback**  
-
-💡 **Want to contribute?** Fork this repository and submit a pull request!  
-📧 **Questions? Suggestions?** Reach out via GitHub Issues.  
 
 ---
 
